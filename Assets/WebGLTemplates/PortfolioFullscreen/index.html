@@ -4,7 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
-    <title>3DWebPortfolio | Interactive Portfolio</title>
+    <title>{{{ PRODUCT_NAME }}} | Interactive Portfolio</title>
+#if SHOW_DIAGNOSTICS
+    <link rel="stylesheet" href="<<<TemplateData/diagnostics.css>>>">
+    <script src="<<<TemplateData/diagnostics.js>>>"></script>
+#endif
+#if DEVELOPMENT_PLAYER
+    <script src="<<<TemplateData/profiler.js>>>"></script>
+#endif
     <style>
       html,
       body {
@@ -34,7 +41,7 @@
         height: 100%;
         display: block;
         outline: none;
-        background: #101312;
+        background: {{{ BACKGROUND_COLOR }}};
       }
 
       #unity-loading-overlay {
@@ -163,18 +170,30 @@
       window.addEventListener("resize", resizeCanvasToViewport);
 
       const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/docs.loader.js";
+      const loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
       const config = {
         arguments: [],
-        dataUrl: buildUrl + "/docs.data",
-        frameworkUrl: buildUrl + "/docs.framework.js",
-        codeUrl: buildUrl + "/docs.wasm",
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_THREADS
+        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
         streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "3DWebPortfolio",
-        productVersion: "0.1.0",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
         showBanner: unityShowBanner
       };
+
+#if BACKGROUND_FILENAME
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+#endif
 
       const script = document.createElement("script");
       script.src = loaderUrl;
@@ -187,6 +206,16 @@
           window.portfolioUnityInstance = unityInstance;
           loadingOverlay.classList.add("is-hidden");
           window.setTimeout(() => loadingOverlay.remove(), 260);
+#if SHOW_DIAGNOSTICS
+          if (window.unityDiagnostics) {
+            unityDiagnostics.openDiagnosticsDiv(unityInstance.GetMetricsInfo);
+          }
+#endif
+#if DEVELOPMENT_PLAYER
+          if (window.unityProfiler) {
+            unityProfiler.createButton(unityInstance);
+          }
+#endif
         }).catch((message) => {
           progressLabel.textContent = "Load failed";
           unityShowBanner(message, "error");
