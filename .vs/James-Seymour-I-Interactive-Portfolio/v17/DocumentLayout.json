@@ -1,0 +1,62 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\james\\OneDrive\\Escritorio\\MY WEBPAGE\\UnityProject\\James-Seymour-I-Interactive-Portfolio\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B870C57F-7192-3573-2F16-D0B8AE6E2C87}|Assembly-CSharp.csproj|c:\\users\\james\\onedrive\\escritorio\\my webpage\\unityproject\\james-seymour-i-interactive-portfolio\\assets\\myassets\\scripts\\player\\movement\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B870C57F-7192-3573-2F16-D0B8AE6E2C87}|Assembly-CSharp.csproj|solutionrelative:assets\\myassets\\scripts\\player\\movement\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B870C57F-7192-3573-2F16-D0B8AE6E2C87}|Assembly-CSharp.csproj|c:\\users\\james\\onedrive\\escritorio\\my webpage\\unityproject\\james-seymour-i-interactive-portfolio\\assets\\myassets\\scripts\\player\\movement\\inputmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B870C57F-7192-3573-2F16-D0B8AE6E2C87}|Assembly-CSharp.csproj|solutionrelative:assets\\myassets\\scripts\\player\\movement\\inputmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PlayerController.cs",
+              "DocumentMoniker": "C:\\Users\\james\\OneDrive\\Escritorio\\MY WEBPAGE\\UnityProject\\James-Seymour-I-Interactive-Portfolio\\Assets\\MyAssets\\Scripts\\Player\\Movement\\PlayerController.cs",
+              "RelativeDocumentMoniker": "Assets\\MyAssets\\Scripts\\Player\\Movement\\PlayerController.cs",
+              "ToolTip": "C:\\Users\\james\\OneDrive\\Escritorio\\MY WEBPAGE\\UnityProject\\James-Seymour-I-Interactive-Portfolio\\Assets\\MyAssets\\Scripts\\Player\\Movement\\PlayerController.cs",
+              "RelativeToolTip": "Assets\\MyAssets\\Scripts\\Player\\Movement\\PlayerController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-04T03:12:32.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InputManager.cs",
+              "DocumentMoniker": "C:\\Users\\james\\OneDrive\\Escritorio\\MY WEBPAGE\\UnityProject\\James-Seymour-I-Interactive-Portfolio\\Assets\\MyAssets\\Scripts\\Player\\Movement\\InputManager.cs",
+              "RelativeDocumentMoniker": "Assets\\MyAssets\\Scripts\\Player\\Movement\\InputManager.cs",
+              "ToolTip": "C:\\Users\\james\\OneDrive\\Escritorio\\MY WEBPAGE\\UnityProject\\James-Seymour-I-Interactive-Portfolio\\Assets\\MyAssets\\Scripts\\Player\\Movement\\InputManager.cs",
+              "RelativeToolTip": "Assets\\MyAssets\\Scripts\\Player\\Movement\\InputManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-04T03:12:28.272Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
