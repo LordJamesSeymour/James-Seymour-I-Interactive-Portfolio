@@ -1,6 +1,14 @@
-# 3DWebPortfolio Agent Guide
+# James-Seymour-I-Interactive-Portfolio Agent Guide
 
-This Unity project is `3DWebPortfolio`.
+This Unity project is `James-Seymour-I-Interactive-Portfolio`.
+
+The current project path is:
+
+`C:\Users\james\OneDrive\Escritorio\MY WEBPAGE\UnityProject\James-Seymour-I-Interactive-Portfolio`
+
+Reference scripts and copied-in previous-project assets should go in:
+
+`C:\Users\james\OneDrive\Escritorio\MY WEBPAGE\UnityProject\James-Seymour-I-Interactive-Portfolio\_references`
 
 The correct Obsidian vault is:
 

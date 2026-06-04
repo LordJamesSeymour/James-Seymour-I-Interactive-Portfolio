@@ -850,14 +850,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: 3DWebPortfolio
+  metroPackageName: James-Seymour-I-Interactive-Portfolio
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: 3DWebPortfolio
+  metroApplicationDescription: James-Seymour-I-Interactive-Portfolio
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -931,7 +931,7 @@ PlayerSettings:
   cloudProjectId: 2177ff5e-1cdd-46ab-a55b-ff271f031aa7
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 3DWebPortfolio
+  projectName: James-Seymour-I-Interactive-Portfolio
   organizationId: flippingpower
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

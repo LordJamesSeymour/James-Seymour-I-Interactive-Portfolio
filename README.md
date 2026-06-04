@@ -1,2 +1,2 @@
-# 3DWebPortfolio
+# James-Seymour-I-Interactive-Portfolio
 
