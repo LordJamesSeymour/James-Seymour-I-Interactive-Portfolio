@@ -3,14 +3,17 @@ using System.Linq;
 using Portfolio.Cameras;
 using Portfolio.Data;
 using Portfolio.Interaction;
-using Portfolio.Player;
 using Portfolio.UI;
+using Unity.Cinemachine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using PortfolioInputManager = Portfolio.Input.InputManager;
+using PortfolioPlayerController = Portfolio.Player.PlayerController;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
@@ -52,7 +55,19 @@ namespace Portfolio.Editor
             characterController.center = new Vector3(0f, 0.9f, 0f);
             characterController.height = 1.8f;
             characterController.radius = 0.38f;
-            player.AddComponent<PortfolioAvatarController>();
+            PortfolioInputManager inputManager = player.AddComponent<PortfolioInputManager>();
+            InputActionAsset inputActions = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
+            if (inputActions != null)
+            {
+                SerializedObject serializedInput = new SerializedObject(inputManager);
+                SetObject(serializedInput, "inputActions", inputActions);
+                serializedInput.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            PortfolioPlayerController playerController = player.AddComponent<PortfolioPlayerController>();
+            SerializedObject serializedPlayer = new SerializedObject(playerController);
+            SetObject(serializedPlayer, "inputManager", inputManager);
+            serializedPlayer.ApplyModifiedPropertiesWithoutUndo();
 
             GameObject cameraObject = new GameObject("Main Camera");
             cameraObject.tag = "MainCamera";
@@ -61,10 +76,40 @@ namespace Portfolio.Editor
             unityCamera.backgroundColor = new Color(0.10f, 0.13f, 0.14f);
             unityCamera.nearClipPlane = 0.1f;
             unityCamera.farClipPlane = 200f;
-            PortfolioCameraController cameraController = cameraObject.AddComponent<PortfolioCameraController>();
-            cameraController.Target = player.transform;
-            cameraObject.transform.position = player.transform.position + new Vector3(0f, 9f, -8f);
-            cameraObject.transform.LookAt(player.transform.position + Vector3.up);
+            CinemachineBrain brain = cameraObject.AddComponent<CinemachineBrain>();
+            brain.UpdateMethod = CinemachineBrain.UpdateMethods.LateUpdate;
+            brain.BlendUpdateMethod = CinemachineBrain.BrainUpdateMethods.LateUpdate;
+
+            GameObject followRig = new GameObject("PortfolioCameraFollowRig");
+            followRig.transform.position = player.transform.position + new Vector3(0f, 1.35f, 0f);
+            followRig.transform.rotation = Quaternion.Euler(18f, 0f, 0f);
+
+            GameObject virtualCameraObject = new GameObject("CM Portfolio Third Person Camera");
+            CinemachineCamera cinemachineCamera = virtualCameraObject.AddComponent<CinemachineCamera>();
+            CinemachineThirdPersonFollow thirdPersonFollow = virtualCameraObject.AddComponent<CinemachineThirdPersonFollow>();
+            CinemachineRotationComposer rotationComposer = virtualCameraObject.AddComponent<CinemachineRotationComposer>();
+            PlayerCameraController cameraController = virtualCameraObject.AddComponent<PlayerCameraController>();
+
+            cinemachineCamera.Follow = followRig.transform;
+            cinemachineCamera.LookAt = player.transform;
+            cinemachineCamera.Priority.Value = 10;
+            cinemachineCamera.Lens.FieldOfView = 55f;
+            thirdPersonFollow.CameraDistance = 6.5f;
+            thirdPersonFollow.VerticalArmLength = 0.45f;
+            thirdPersonFollow.Damping = new Vector3(0.08f, 0.18f, 0.22f);
+            rotationComposer.TargetOffset = new Vector3(0f, 1.35f, 0f);
+            rotationComposer.Damping = new Vector2(0.12f, 0.12f);
+
+            SerializedObject serializedCamera = new SerializedObject(cameraController);
+            SetObject(serializedCamera, "target", player.transform);
+            SetObject(serializedCamera, "inputManager", inputManager);
+            SetObject(serializedCamera, "followRig", followRig.transform);
+            SetObject(serializedCamera, "cinemachineCamera", cinemachineCamera);
+            SetObject(serializedCamera, "thirdPersonFollow", thirdPersonFollow);
+            SetObject(serializedCamera, "rotationComposer", rotationComposer);
+            serializedCamera.ApplyModifiedPropertiesWithoutUndo();
+
+            playerController.CameraTransform = unityCamera.transform;
 
             GameObject lightObject = new GameObject("Directional Light");
             Light light = lightObject.AddComponent<Light>();

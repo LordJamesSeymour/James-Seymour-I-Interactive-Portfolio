@@ -1,7 +1,7 @@
 using Portfolio.Data;
-using Portfolio.Player;
 using Portfolio.UI;
 using UnityEngine;
+using PortfolioPlayerController = Portfolio.Player.PlayerController;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -73,7 +73,8 @@ namespace Portfolio.Interaction
 
         private bool IsPlayer(Component other)
         {
-            return other.GetComponentInParent<PortfolioAvatarController>() != null || other.CompareTag(playerTag);
+            return other.GetComponentInParent<PortfolioPlayerController>() != null ||
+                   other.CompareTag(playerTag);
         }
 
         private void ShowProject()

@@ -13,6 +13,7 @@ namespace Portfolio.Editor
         private static readonly string[] PortfolioFolders =
         {
             "Assets/Portfolio/Scripts/Core",
+            "Assets/Portfolio/Scripts/Input",
             "Assets/Portfolio/Scripts/Player",
             "Assets/Portfolio/Scripts/Camera",
             "Assets/Portfolio/Scripts/Interaction",
