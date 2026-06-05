@@ -21,11 +21,18 @@ public sealed class PlayerController : MonoBehaviour
     // Removes contact friction so the player slides cleanly along tilemap edges.
     [SerializeField] private bool useZeroFrictionMaterial = true;
 
+    // Cast before moving so WebGL builds cannot tunnel through tilemap colliders.
+    [SerializeField] private bool useCollisionCasts = true;
+
+    [SerializeField, Min(0.001f)] private float collisionSkinWidth = 0.015f;
+
     private Rigidbody2D body;
     private Collider2D bodyCollider;
     private InputManager inputManager;
     private Vector2 currentVelocity;
     private PhysicsMaterial2D zeroFrictionMaterial;
+    private ContactFilter2D movementContactFilter;
+    private readonly RaycastHit2D[] movementHits = new RaycastHit2D[8];
 
     private void Reset()
     {
@@ -37,6 +44,7 @@ public sealed class PlayerController : MonoBehaviour
 
         EnsureCollider();
         ConfigureRigidbody();
+        ConfigureMovementContactFilter();
     }
 
     private void Awake()
@@ -49,6 +57,7 @@ public sealed class PlayerController : MonoBehaviour
 
         EnsureCollider();
         ConfigureRigidbody();
+        ConfigureMovementContactFilter();
 
         inputManager = GetComponent<InputManager>();
         if (inputManager == null)
@@ -80,7 +89,16 @@ public sealed class PlayerController : MonoBehaviour
         }
 
         currentVelocity = nextVelocity;
-        body.linearVelocity = currentVelocity;
+
+        if (useCollisionCasts)
+        {
+            MoveWithCollision(currentVelocity * Time.fixedDeltaTime);
+            body.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            body.linearVelocity = currentVelocity;
+        }
     }
 
     private void OnDisable()
@@ -123,6 +141,53 @@ public sealed class PlayerController : MonoBehaviour
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
+    private void ConfigureMovementContactFilter()
+    {
+        movementContactFilter = new ContactFilter2D();
+        movementContactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
+        movementContactFilter.useTriggers = false;
+    }
+
+    private void MoveWithCollision(Vector2 displacement)
+    {
+        if (body == null || bodyCollider == null || displacement.sqrMagnitude <= Mathf.Epsilon)
+        {
+            return;
+        }
+
+        MoveOnAxis(new Vector2(displacement.x, 0f));
+        MoveOnAxis(new Vector2(0f, displacement.y));
+    }
+
+    private void MoveOnAxis(Vector2 displacement)
+    {
+        float distance = displacement.magnitude;
+        if (distance <= Mathf.Epsilon)
+        {
+            return;
+        }
+
+        Vector2 direction = displacement / distance;
+        float allowedDistance = distance;
+        int hitCount = bodyCollider.Cast(direction, movementContactFilter, movementHits, distance + collisionSkinWidth);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit2D hit = movementHits[i];
+            if (hit.collider == null || hit.collider == bodyCollider || hit.collider.isTrigger)
+            {
+                continue;
+            }
+
+            allowedDistance = Mathf.Min(allowedDistance, Mathf.Max(0f, hit.distance - collisionSkinWidth));
+        }
+
+        if (allowedDistance > Mathf.Epsilon)
+        {
+            body.position += direction * allowedDistance;
+        }
+    }
+
     private void ApplyZeroFrictionMaterial()
     {
         if (!useZeroFrictionMaterial || bodyCollider == null)
@@ -145,5 +210,6 @@ public sealed class PlayerController : MonoBehaviour
         acceleration = Mathf.Max(0f, acceleration);
         deceleration = Mathf.Max(0f, deceleration);
         inputDeadZone = Mathf.Max(0f, inputDeadZone);
+        collisionSkinWidth = Mathf.Max(0.001f, collisionSkinWidth);
     }
 }

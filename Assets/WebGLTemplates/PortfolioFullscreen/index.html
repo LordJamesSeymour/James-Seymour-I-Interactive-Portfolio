@@ -72,24 +72,33 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var buildCacheBust = String(Date.now());
+
+      function withBuildVersion(url) {
+        return url + "?v=" + encodeURIComponent(buildCacheBust);
+      }
+
+      var loaderUrl = withBuildVersion(buildUrl + "/{{{ LOADER_FILENAME }}}");
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        dataUrl: withBuildVersion(buildUrl + "/{{{ DATA_FILENAME }}}"),
+        frameworkUrl: withBuildVersion(buildUrl + "/{{{ FRAMEWORK_FILENAME }}}"),
 #if USE_THREADS
-        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
+        workerUrl: withBuildVersion(buildUrl + "/{{{ WORKER_FILENAME }}}"),
 #endif
 #if USE_WASM
-        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        codeUrl: withBuildVersion(buildUrl + "/{{{ CODE_FILENAME }}}"),
 #endif
 #if SYMBOLS_FILENAME
-        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+        symbolsUrl: withBuildVersion(buildUrl + "/{{{ SYMBOLS_FILENAME }}}"),
 #endif
         streamingAssetsUrl: "StreamingAssets",
         companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
         productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
-        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        productVersion: buildCacheBust,
+        cacheControl: function(url) {
+          return "no-store";
+        },
         showBanner: unityShowBanner,
       };
 

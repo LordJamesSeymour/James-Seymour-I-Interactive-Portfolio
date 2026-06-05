@@ -62,16 +62,25 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/docs.loader.js";
+      var buildCacheBust = String(Date.now());
+
+      function withBuildVersion(url) {
+        return url + "?v=" + encodeURIComponent(buildCacheBust);
+      }
+
+      var loaderUrl = withBuildVersion(buildUrl + "/docs.loader.js");
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/docs.data.unityweb",
-        frameworkUrl: buildUrl + "/docs.framework.js.unityweb",
-        codeUrl: buildUrl + "/docs.wasm.unityweb",
+        dataUrl: withBuildVersion(buildUrl + "/docs.data.unityweb"),
+        frameworkUrl: withBuildVersion(buildUrl + "/docs.framework.js.unityweb"),
+        codeUrl: withBuildVersion(buildUrl + "/docs.wasm.unityweb"),
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "James Seymour I Interactive Portfolio",
-        productVersion: "1.0",
+        productVersion: buildCacheBust,
+        cacheControl: function(url) {
+          return "no-store";
+        },
         showBanner: unityShowBanner,
       };
 
