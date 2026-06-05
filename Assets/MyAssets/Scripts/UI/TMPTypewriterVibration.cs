@@ -35,9 +35,11 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     private const float VibrationFrequency = 38f;
 
     private string fullText = string.Empty;
+    private bool hasCachedFullText;
     private bool hasPreparedText;
     private bool isPlaying;
     private bool hasWarnedAboutMissingText;
+    private bool hasWarnedAboutEmptyText;
     private float elapsedTime;
     private int totalCharacterCount;
     private int visibleCharacterCount;
@@ -47,7 +49,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     /// </summary>
     public void Play()
     {
-        if (!TryResolveText())
+        if (!EnsureFullTextCached())
         {
             return;
         }
@@ -99,7 +101,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     /// </summary>
     public void StopAndShowFullText()
     {
-        if (!TryResolveText())
+        if (!EnsureFullTextCached())
         {
             return;
         }
@@ -122,7 +124,10 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
 
     private void Awake()
     {
-        TryResolveText();
+        if (TryResolveText())
+        {
+            CacheFullTextFromTarget();
+        }
     }
 
     private void OnEnable()
@@ -132,14 +137,25 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
             return;
         }
 
-        if (resetOnEnable)
+        if (!hasCachedFullText)
         {
-            PrepareFromCurrentText(resetProgress: true);
+            CacheFullTextFromTarget();
         }
 
         if (autoPlayOnStart)
         {
-            Play();
+            if (resetOnEnable)
+            {
+                Restart();
+            }
+            else
+            {
+                Play();
+            }
+        }
+        else if (resetOnEnable)
+        {
+            ShowFullCleanText();
         }
     }
 
@@ -201,14 +217,49 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
         return false;
     }
 
-    private bool PrepareFromCurrentText(bool resetProgress)
+    private bool EnsureFullTextCached()
     {
         if (!TryResolveText())
         {
             return false;
         }
 
-        fullText = targetText.text ?? string.Empty;
+        if (!hasCachedFullText || string.IsNullOrEmpty(fullText))
+        {
+            CacheFullTextFromTarget();
+        }
+
+        return hasCachedFullText;
+    }
+
+    private void CacheFullTextFromTarget()
+    {
+        if (!TryResolveText())
+        {
+            return;
+        }
+
+        string candidateText = targetText.text ?? string.Empty;
+        if (string.IsNullOrEmpty(candidateText) && !hasWarnedAboutEmptyText)
+        {
+            Debug.LogWarning(
+                $"{nameof(TMPTypewriterVibration)} on '{name}' found empty dialogue text. " +
+                "The TextMeshPro text field should contain the full message to reveal.",
+                this);
+            hasWarnedAboutEmptyText = true;
+        }
+
+        fullText = candidateText;
+        hasCachedFullText = true;
+    }
+
+    private bool PrepareFromCurrentText(bool resetProgress)
+    {
+        if (!EnsureFullTextCached())
+        {
+            return false;
+        }
+
         targetText.text = fullText;
         targetText.maxVisibleCharacters = int.MaxValue;
         targetText.ForceMeshUpdate();
@@ -337,6 +388,11 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
 
     private void ShowFullCleanText()
     {
+        if (targetText == null)
+        {
+            return;
+        }
+
         targetText.text = fullText;
         targetText.maxVisibleCharacters = int.MaxValue;
         targetText.ForceMeshUpdate();
