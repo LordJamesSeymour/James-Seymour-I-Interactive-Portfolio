@@ -12,6 +12,11 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+# GitHub Pages publishes this Unity WebGL export from main/docs.
+# Keep the generated Build files, CNAME, and .nojekyll tracked.
+!/docs/
+!/docs/**
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
