@@ -92,14 +92,6 @@
         loadingText.textContent = percent + "%";
       }
 
-      function restartIntroText(unityInstance) {
-        try {
-          unityInstance.SendMessage("Text (TMP)", "Restart");
-        } catch (error) {
-          console.warn("Could not restart intro dialogue after WebGL load.", error);
-        }
-      }
-
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -107,9 +99,6 @@
           updateLoadingProgress(1);
           fitGameToViewport();
           loadingBar.style.display = "none";
-          requestAnimationFrame(() => {
-            setTimeout(() => restartIntroText(unityInstance), 100);
-          });
         }).catch((message) => {
           alert(message);
         });

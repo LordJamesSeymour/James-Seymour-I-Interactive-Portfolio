@@ -4541,6 +4541,7 @@ MonoBehaviour:
   targetText: {fileID: 2030449108}
   totalTypingDuration: 15
   autoPlayOnStart: 1
+  autoPlayDelay: 0.75
   resetOnEnable: 1
   vibrationDurationPerCharacter: 0.25
   vibrationStrength: 1.2

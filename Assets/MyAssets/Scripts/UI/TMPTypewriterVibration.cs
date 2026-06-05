@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -21,6 +22,9 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     [Tooltip("Starts the typewriter animation automatically when this component is enabled in Play Mode.")]
     [SerializeField] private bool autoPlayOnStart = true;
 
+    [Tooltip("Delay before autoplay starts. Useful for WebGL so loading overlays disappear before the reveal begins.")]
+    [SerializeField, Min(0f)] private float autoPlayDelay = 0.75f;
+
     [Tooltip("When enabled, the text returns to the start of the typewriter animation every time this component is enabled.")]
     [SerializeField] private bool resetOnEnable = true;
 
@@ -40,6 +44,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     private bool isPlaying;
     private bool hasWarnedAboutMissingText;
     private bool hasWarnedAboutEmptyText;
+    private Coroutine autoPlayRoutine;
     private float elapsedTime;
     private int totalCharacterCount;
     private int visibleCharacterCount;
@@ -144,14 +149,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
 
         if (autoPlayOnStart)
         {
-            if (resetOnEnable)
-            {
-                Restart();
-            }
-            else
-            {
-                Play();
-            }
+            QueueAutoPlay();
         }
         else if (resetOnEnable)
         {
@@ -162,6 +160,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     private void OnDisable()
     {
         isPlaying = false;
+        CancelAutoPlay();
 
         if (Application.isPlaying && targetText != null)
         {
@@ -215,6 +214,54 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void QueueAutoPlay()
+    {
+        CancelAutoPlay();
+
+        if (resetOnEnable && hasCachedFullText)
+        {
+            PrepareFromCurrentText(resetProgress: true);
+        }
+
+        if (autoPlayDelay <= 0f)
+        {
+            StartAutoPlay();
+            return;
+        }
+
+        autoPlayRoutine = StartCoroutine(StartAutoPlayAfterDelay());
+    }
+
+    private IEnumerator StartAutoPlayAfterDelay()
+    {
+        yield return new WaitForSeconds(autoPlayDelay);
+        autoPlayRoutine = null;
+        StartAutoPlay();
+    }
+
+    private void StartAutoPlay()
+    {
+        if (resetOnEnable)
+        {
+            Restart();
+        }
+        else
+        {
+            Play();
+        }
+    }
+
+    private void CancelAutoPlay()
+    {
+        if (autoPlayRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(autoPlayRoutine);
+        autoPlayRoutine = null;
     }
 
     private bool EnsureFullTextCached()
@@ -416,6 +463,7 @@ public sealed class TMPTypewriterVibration : MonoBehaviour
     private void OnValidate()
     {
         totalTypingDuration = Mathf.Max(MinimumTypingDuration, totalTypingDuration);
+        autoPlayDelay = Mathf.Max(0f, autoPlayDelay);
         vibrationDurationPerCharacter = Mathf.Max(0f, vibrationDurationPerCharacter);
         vibrationStrength = Mathf.Max(0f, vibrationStrength);
 
