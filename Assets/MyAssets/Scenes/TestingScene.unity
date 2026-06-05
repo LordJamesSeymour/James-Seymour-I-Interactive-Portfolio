@@ -4540,7 +4540,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TMPTypewriterVibration
   targetText: {fileID: 2030449108}
   totalTypingDuration: 15
-  autoPlayOnStart: 1
+  autoPlayOnStart: 0
   resetOnEnable: 1
   vibrationDurationPerCharacter: 0.25
   vibrationStrength: 1.2
